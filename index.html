@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#f7f4ee">
+<link rel="manifest" href="manifest.json">
+<title>生活管家</title>
+<style>
+:root{--bg:#f7f4ee;--card:#fff;--text:#282621;--muted:#918b82;--line:#ece7df;--accent:#292722;--soft:#f0ece5}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif}
+body{min-height:100vh}
+.app{max-width:620px;margin:auto;min-height:100vh;padding:18px 15px calc(102px + env(safe-area-inset-bottom))}
+header{padding:8px 4px 12px;display:flex;justify-content:space-between;align-items:center}
+h1{font-size:28px;margin:0 0 4px;letter-spacing:-.5px}.date{font-size:13px;color:var(--muted)}
+.iconbtn{width:44px;height:44px;border:0;border-radius:15px;background:var(--card);font-size:20px}
+.hero{background:var(--accent);color:#fff;border-radius:24px;padding:20px;margin-bottom:12px;box-shadow:0 10px 28px rgba(30,25,15,.12)}
+.hero small{opacity:.65}.hero .big{font-size:34px;font-weight:750;margin:5px 0 13px}
+.month{display:flex;gap:22px}.month div{font-size:12px;opacity:.72}.month b{display:block;font-size:15px;color:#fff;margin-top:3px}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:12px 0}
+.quick button{height:70px;border:0;border-radius:19px;background:var(--card);font-size:16px;font-weight:650;color:var(--text);box-shadow:0 3px 14px rgba(40,30,15,.05)}
+.quick span{display:block;font-size:23px;margin-bottom:3px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin:12px 0}
+.cardtitle{display:flex;justify-content:space-between;align-items:center;font-weight:700;margin-bottom:5px}
+.link{border:0;background:transparent;color:#777;font-size:13px}
+.todo{display:flex;align-items:center;gap:11px;padding:13px 0;border-bottom:1px solid var(--line);min-height:54px}.todo:last-child{border:0}
+.check{width:25px;height:25px;flex:0 0 25px;border:1.5px solid #bbb;border-radius:9px;background:#fff;font-size:0}.check.done{background:#292722;border-color:#292722;position:relative}.check.done:after{content:"✓";color:#fff;font-size:15px;position:absolute;left:5px;top:1px}
+.todo .txt{flex:1;font-size:15px}.done .txt{text-decoration:line-through;color:#aaa}.time{font-size:11px;color:#999}.del{border:0;background:transparent;color:#bbb;font-size:22px;padding:5px}
+.exp{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.exp:last-child{border:0}.cat{width:40px;height:40px;border-radius:13px;background:var(--soft);display:grid;place-items:center;font-size:19px}.exp .info{flex:1}.exp .info b{font-size:14px}.exp .info small{display:block;color:#999;margin-top:3px}.amount{font-weight:750}
+.empty{text-align:center;color:#aaa;padding:20px 5px;font-size:13px}
+.tabs{position:fixed;z-index:20;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);backdrop-filter:blur(16px);border-top:1px solid var(--line);padding:8px 12px calc(8px + env(safe-area-inset-bottom));display:flex;justify-content:center;gap:5px}
+.tabs button{flex:1;max-width:130px;height:48px;border:0;border-radius:15px;background:transparent;color:#858078;font-size:12px}.tabs button b{display:block;font-size:19px;line-height:20px}.tabs button.active{background:#292722;color:#fff}
+.fab{position:fixed;z-index:30;right:18px;bottom:82px;width:58px;height:58px;border-radius:19px;border:0;background:#292722;color:#fff;font-size:29px;box-shadow:0 9px 22px rgba(30,25,15,.2)}
+.sheet{position:fixed;z-index:50;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:flex-end}.sheet.hidden{display:none}
+.sheetbox{background:#fff;width:100%;max-width:620px;margin:auto;border-radius:25px 25px 0 0;padding:14px 17px calc(20px + env(safe-area-inset-bottom));max-height:88vh;overflow:auto}
+.handle{width:42px;height:5px;border-radius:5px;background:#ddd;margin:0 auto 14px}.sheet h2{font-size:21px;margin:4px 0 15px}
+.choice{display:grid;grid-template-columns:1fr 1fr;gap:10px}.choice button{height:62px;border:0;border-radius:16px;background:var(--soft);font-size:15px}
+input,select{width:100%;height:49px;border:1px solid #ded9d1;border-radius:14px;padding:0 13px;font-size:16px;background:#fff;margin-top:6px}label{font-size:12px;color:#777;display:block;margin-top:13px}
+.primary{width:100%;height:52px;border:0;border-radius:15px;background:#292722;color:#fff;font-size:16px;margin-top:17px}
+.secondary{width:100%;height:48px;border:0;border-radius:14px;background:var(--soft);margin-top:9px;font-size:15px}
+.section{display:none}.section.active{display:block}.note{color:#999;font-size:12px;line-height:1.6}
+@media(min-width:700px){.fab{right:calc((100vw - 620px)/2 + 18px)}}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div><h1>生活管家</h1><div class="date" id="date"></div></div><button class="iconbtn" onclick="show('settings')">⚙️</button></header>
+
+<section id="home" class="section active">
+<div class="hero"><small>今天花了</small><div class="big" id="todayMoney">¥0</div><div class="month"><div>本月支出<b id="monthMoney">¥0</b></div><div>待办<b id="todoCount">0 件</b></div></div></div>
+<div class="quick"><button onclick="openSheet('expense')"><span>💰</span>记一笔</button><button onclick="openSheet('todo')"><span>🔔</span>加待办</button></div>
+<div class="card"><div class="cardtitle">今天要做 <button class="link" onclick="show('todoPage')">全部</button></div><div id="homeTodos"></div></div>
+<div class="card"><div class="cardtitle">最近账单 <button class="link" onclick="show('ledger')">全部</button></div><div id="homeExpenses"></div></div>
+</section>
+
+<section id="ledger" class="section"><h1>账单</h1><div class="date">本月一共花了 <b id="ledgerTotal">¥0</b></div><div id="allExpenses"></div></section>
+<section id="todoPage" class="section"><h1>待办</h1><div class="date">把事情放下来，脑子会轻一点</div><div class="card"><button class="primary" style="margin:0" onclick="openSheet('todo')">＋ 添加待办</button></div><div id="allTodos"></div></section>
+<section id="settings" class="section"><h1>我的</h1><div class="date">数据保存在这台设备</div><div class="card"><b>备份数据</b><p class="note">建议偶尔导出一次。如果清理浏览器数据，可能会丢失记录。</p><button class="primary" onclick="exportData()">导出备份</button><button class="secondary" onclick="document.getElementById('file').click()">导入备份</button><input id="file" type="file" accept=".json" style="display:none"></div><div class="card"><b>桌面使用</b><p class="note">安卓 Chrome/Edge：打开本页面后选择“添加到主屏幕”或“安装应用”。安装后可以像普通 App 一样从桌面打开。</p></div></section>
+</div>
+
+<button class="fab" onclick="openSheet()">＋</button>
+<nav class="tabs"><button class="active" onclick="show('home',this)"><b>⌂</b>今日</button><button onclick="show('ledger',this)"><b>¥</b>账单</button><button onclick="show('todoPage',this)"><b>✓</b>待办</button><button onclick="show('settings',this)"><b>⚙</b>我的</button></nav>
+
+<div id="sheet" class="sheet hidden" onclick="if(event.target===this)closeSheet()"><div class="sheetbox"><div class="handle"></div><div id="sheetContent"></div></div></div>
+
+<script>
+const KEY='life_manager_v2';let data=JSON.parse(localStorage.getItem(KEY)||'{"todos":[],"expenses":[]}');const save=()=>localStorage.setItem(KEY,JSON.stringify(data));
+const pad=n=>String(n).padStart(2,'0');const now=new Date();const today=()=>{let d=new Date();return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`};const money=n=>'¥'+Number(n).toFixed(2).replace('.00','');
+document.getElementById('date').textContent=new Date().toLocaleDateString('zh-CN',{weekday:'long',month:'long',day:'numeric'});
+function show(id,btn){document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active');render();scrollTo(0,0)}
+function openSheet(type){let c='';if(!type){c='<h2>要做什么？</h2><div class="choice"><button onclick="openSheet(\\'expense\\')">💰<br>记一笔</button><button onclick="openSheet(\\'todo\\')">🔔<br>加待办</button></div>'}
+if(type==='expense')c='<h2>记一笔</h2><label>金额<input id="amt" type="number" inputmode="decimal" step="0.01" placeholder="例如 28"></label><label>花在哪里<input id="note" placeholder="例如 午饭"></label><label>分类<select id="cat"><option>餐饮</option><option>交通</option><option>购物</option><option>居住</option><option>工作</option><option>学习</option><option>娱乐</option><option>其他</option></select></label><button class="primary" onclick="addExpense()">保存</button>';
+if(type==='todo')c='<h2>添加待办</h2><label>要做什么<input id="tt" placeholder="例如：回复客户消息"></label><label>时间（可选）<input id="tm" type="time"></label><button class="primary" onclick="addTodo()">保存</button>';
+document.getElementById('sheetContent').innerHTML=c;document.getElementById('sheet').classList.remove('hidden');setTimeout(()=>{let x=document.querySelector('#sheet input');if(x)x.focus()},100)}
+function closeSheet(){document.getElementById('sheet').classList.add('hidden')}
+function addExpense(){let amount=parseFloat(document.getElementById('amt').value),note=document.getElementById('note').value.trim(),cat=document.getElementById('cat').value;if(!isFinite(amount)||amount<0){alert('请输入正确金额');return}data.expenses.unshift({id:Date.now(),amount,note:note||'未备注',cat,date:today()});save();closeSheet();render()}
+function addTodo(){let title=document.getElementById('tt').value.trim();if(!title){alert('写点内容吧');return}data.todos.unshift({id:Date.now(),title,time:document.getElementById('tm').value,date:today(),done:false});save();closeSheet();render()}
+function toggle(id){let x=data.todos.find(a=>a.id==id);if(x)x.done=!x.done;save();render()}
+function delTodo(id){data.todos=data.todos.filter(a=>a.id!=id);save();render()}
+function delExp(id){data.expenses=data.expenses.filter(a=>a.id!=id);save();render()}
+const emoji={餐饮:'🍚',交通:'🚕',购物:'🛍️',居住:'🏠',工作:'💼',学习:'📚',娱乐:'🎮',其他:'•'};
+function todoHTML(x){return `<div class="todo ${x.done?'done':''}"><button class="check ${x.done?'done':''}" onclick="toggle(${x.id})">✓</button><span class="txt">${esc(x.title)}</span>${x.time?`<span class="time">${x.time}</span>`:''}<button class="del" onclick="delTodo(${x.id})">×</button></div>`}
+function expHTML(x){return `<div class="exp"><div class="cat">${emoji[x.cat]||'•'}</div><div class="info"><b>${esc(x.note)}</b><small>${esc(x.cat)} · ${x.date}</small></div><div class="amount">${money(x.amount)}</div><button class="del" onclick="delExp(${x.id})">×</button></div>`}
+function render(){let t=data.expenses.filter(x=>x.date===today()).reduce((s,x)=>s+x.amount,0),m=data.expenses.filter(x=>x.date.startsWith(today().slice(0,7))).reduce((s,x)=>s+x.amount,0);document.getElementById('todayMoney').textContent=money(t);document.getElementById('monthMoney').textContent=money(m);document.getElementById('ledgerTotal').textContent=money(m);let td=data.todos.filter(x=>x.date===today()),pending=td.filter(x=>!x.done).length;document.getElementById('todoCount').textContent=pending+' 件';document.getElementById('homeTodos').innerHTML=td.length?td.slice(0,6).map(todoHTML).join(''):'<div class="empty">今天还没有待办 ☕</div>';document.getElementById('allTodos').innerHTML=data.todos.length?data.todos.map(todoHTML).join(''):'<div class="card empty">还没有待办</div>';document.getElementById('homeExpenses').innerHTML=data.expenses.length?data.expenses.slice(0,5).map(expHTML).join(''):'<div class="empty">还没有账单</div>';document.getElementById('allExpenses').innerHTML=data.expenses.length?data.expenses.map(expHTML).join(''):'<div class="card empty">还没有账单</div>'}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function exportData(){let b=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='生活管家备份.json';a.click()}
+document.getElementById('file').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(x.todos&&x.expenses){data=x;save();render();alert('导入成功')}else throw 0}catch(_){alert('备份文件不正确')}};r.readAsText(f)}
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));render();
+</script>
+</body>
+</html>
