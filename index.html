@@ -69,10 +69,43 @@ const KEY='life_manager_v2';let data=JSON.parse(localStorage.getItem(KEY)||'{"to
 const pad=n=>String(n).padStart(2,'0');const now=new Date();const today=()=>{let d=new Date();return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`};const money=n=>'¥'+Number(n).toFixed(2).replace('.00','');
 document.getElementById('date').textContent=new Date().toLocaleDateString('zh-CN',{weekday:'long',month:'long',day:'numeric'});
 function show(id,btn){document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active');render();scrollTo(0,0)}
-function openSheet(type){let c='';if(!type){c='<h2>要做什么？</h2><div class="choice"><button onclick="openSheet(\\'expense\\')">💰<br>记一笔</button><button onclick="openSheet(\\'todo\\')">🔔<br>加待办</button></div>'}
-if(type==='expense')c='<h2>记一笔</h2><label>金额<input id="amt" type="number" inputmode="decimal" step="0.01" placeholder="例如 28"></label><label>花在哪里<input id="note" placeholder="例如 午饭"></label><label>分类<select id="cat"><option>餐饮</option><option>交通</option><option>购物</option><option>居住</option><option>工作</option><option>学习</option><option>娱乐</option><option>其他</option></select></label><button class="primary" onclick="addExpense()">保存</button>';
-if(type==='todo')c='<h2>添加待办</h2><label>要做什么<input id="tt" placeholder="例如：回复客户消息"></label><label>时间（可选）<input id="tm" type="time"></label><button class="primary" onclick="addTodo()">保存</button>';
-document.getElementById('sheetContent').innerHTML=c;document.getElementById('sheet').classList.remove('hidden');setTimeout(()=>{let x=document.querySelector('#sheet input');if(x)x.focus()},100)}
+function openSheet(type){
+  let c='';
+
+  if(!type){
+    c='<h2>要做什么？</h2><div class="choice">'+
+      '<button onclick="openSheet(\'expense\')">💰<br>记一笔</button>'+
+      '<button onclick="openSheet(\'todo\')">🔔<br>加待办</button>'+
+      '</div>';
+  }
+
+  if(type==='expense'){
+    c='<h2>记一笔</h2>'+
+      '<label>金额<input id="amt" type="number" inputmode="decimal" step="0.01" placeholder="例如 28"></label>'+
+      '<label>花在哪里<input id="note" placeholder="例如 午饭"></label>'+
+      '<label>分类<select id="cat">'+
+      '<option>餐饮</option><option>交通</option><option>购物</option>'+
+      '<option>居住</option><option>工作</option><option>学习</option>'+
+      '<option>娱乐</option><option>其他</option>'+
+      '</select></label>'+
+      '<button class="primary" onclick="addExpense()">保存</button>';
+  }
+
+  if(type==='todo'){
+    c='<h2>添加待办</h2>'+
+      '<label>要做什么<input id="tt" placeholder="例如：回复客户消息"></label>'+
+      '<label>时间（可选）<input id="tm" type="time"></label>'+
+      '<button class="primary" onclick="addTodo()">保存</button>';
+  }
+
+  document.getElementById('sheetContent').innerHTML=c;
+  document.getElementById('sheet').classList.remove('hidden');
+
+  setTimeout(()=>{
+    let x=document.querySelector('#sheet input');
+    if(x)x.focus();
+  },100);
+}
 function closeSheet(){document.getElementById('sheet').classList.add('hidden')}
 function addExpense(){let amount=parseFloat(document.getElementById('amt').value),note=document.getElementById('note').value.trim(),cat=document.getElementById('cat').value;if(!isFinite(amount)||amount<0){alert('请输入正确金额');return}data.expenses.unshift({id:Date.now(),amount,note:note||'未备注',cat,date:today()});save();closeSheet();render()}
 function addTodo(){let title=document.getElementById('tt').value.trim();if(!title){alert('写点内容吧');return}data.todos.unshift({id:Date.now(),title,time:document.getElementById('tm').value,date:today(),done:false});save();closeSheet();render()}
